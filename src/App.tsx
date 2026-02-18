@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View, Text, StatusBar, SafeAreaView } from 'react-native';
 import { useKeepAwake } from 'expo-keep-awake';
 import { MjpegView } from './components/MjpegView';
@@ -7,13 +7,34 @@ import TelemetryDashboard from './components/TelemetryDashboard';
 import ControlPanel from './components/ControlPanel';
 import MapDashboard from './components/MapDashboard';
 import { useAppStore } from './store/useAppStore';
+import { startDetectionPolling, stopDetectionPolling, setRemoteModel } from './services/InferenceClient';
 
 // Pi MJPEG server
 const PI_URL = "http://10.165.71.121:8080";
 
 export default function App() {
     useKeepAwake();
+    const inferenceEnabled = useAppStore(state => state.inferenceEnabled);
+    const activeModel = useAppStore(state => state.activeModel);
 
+    // Start/stop detection polling
+    useEffect(() => {
+        if (inferenceEnabled) {
+            setRemoteModel(activeModel);
+            startDetectionPolling();
+        } else {
+            setRemoteModel('off');
+            stopDetectionPolling();
+        }
+        return () => stopDetectionPolling();
+    }, [inferenceEnabled]);
+
+    // Sync model selection to Pi
+    useEffect(() => {
+        if (inferenceEnabled) {
+            setRemoteModel(activeModel);
+        }
+    }, [activeModel]);
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar hidden />
