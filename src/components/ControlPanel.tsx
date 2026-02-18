@@ -2,6 +2,9 @@ import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useAppStore } from '../store/useAppStore';
 
+/**
+ * Compact horizontal pill controls for the racing HUD.
+ */
 const ControlPanel: React.FC = () => {
     const activeModel = useAppStore((state) => state.activeModel);
     const inferenceEnabled = useAppStore((state) => state.inferenceEnabled);
@@ -10,31 +13,25 @@ const ControlPanel: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>CONTROLS</Text>
-
             <TouchableOpacity
-                style={[styles.button, activeModel === 'cone' ? styles.activeBtn : styles.inactiveBtn]}
+                style={[styles.pill, activeModel === 'cone' ? styles.active : styles.inactive]}
                 onPress={() => setActiveModel('cone')}
             >
-                <Text style={styles.btnText}>MODEL: CONE</Text>
+                <Text style={styles.pillText}>CONE</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-                style={[styles.button, activeModel === 'pothole' ? styles.activeBtn : styles.inactiveBtn]}
+                style={[styles.pill, activeModel === 'pothole' ? styles.active : styles.inactive]}
                 onPress={() => setActiveModel('pothole')}
             >
-                <Text style={styles.btnText}>MODEL: POTHOLE</Text>
+                <Text style={styles.pillText}>POTHOLE</Text>
             </TouchableOpacity>
 
-            <View style={styles.separator} />
-
             <TouchableOpacity
-                style={[styles.button, inferenceEnabled ? styles.activeBtn : styles.dangerBtn]}
+                style={[styles.pill, inferenceEnabled ? styles.aiOn : styles.aiOff]}
                 onPress={toggleInference}
             >
-                <Text style={styles.btnText}>
-                    INFERENCE: {inferenceEnabled ? 'ON' : 'OFF'}
-                </Text>
+                <Text style={styles.pillText}>AI {inferenceEnabled ? 'ON' : 'OFF'}</Text>
             </TouchableOpacity>
         </View>
     );
@@ -42,42 +39,32 @@ const ControlPanel: React.FC = () => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'rgba(0,0,0,0.6)',
-        padding: 10,
-        borderRadius: 10,
-        width: 160,
+        flexDirection: 'row',
+        gap: 6,
     },
-    header: {
-        color: '#AAA',
-        fontSize: 10,
-        marginBottom: 10,
-        textAlign: 'center',
-        fontWeight: 'bold',
+    pill: {
+        paddingHorizontal: 12,
+        paddingVertical: 7,
+        borderRadius: 14,
     },
-    button: {
-        paddingVertical: 12,
-        paddingHorizontal: 15,
-        borderRadius: 8,
-        marginBottom: 8,
-        alignItems: 'center',
+    active: {
+        backgroundColor: 'rgba(0,122,255,0.85)',
     },
-    activeBtn: {
-        backgroundColor: '#007AFF',
+    inactive: {
+        backgroundColor: 'rgba(60,60,60,0.7)',
     },
-    inactiveBtn: {
-        backgroundColor: '#333',
+    aiOn: {
+        backgroundColor: 'rgba(48,209,88,0.85)',
     },
-    dangerBtn: {
-        backgroundColor: '#FF3B30',
+    aiOff: {
+        backgroundColor: 'rgba(255,59,48,0.8)',
     },
-    btnText: {
+    pillText: {
         color: 'white',
         fontWeight: 'bold',
-        fontSize: 12,
+        fontSize: 11,
+        letterSpacing: 0.5,
     },
-    separator: {
-        height: 10,
-    }
 });
 
 export default ControlPanel;

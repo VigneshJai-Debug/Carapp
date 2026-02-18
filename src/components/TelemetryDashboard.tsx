@@ -1,84 +1,108 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useAppStore } from '../store/useAppStore';
 
+/**
+ * Compact racing telemetry — small overlay, bottom-left.
+ * Speed is the hero number; battery, power, range are tiny stats.
+ */
+
+const getBatteryColor = (pct: number) => {
+    if (pct > 50) return '#30D158';
+    if (pct > 20) return '#FF9500';
+    return '#FF453A';
+};
+
 const TelemetryDashboard: React.FC = () => {
-    const telemetry = useAppStore((state) => state.telemetry);
+    const t = useAppStore((state) => state.telemetry);
 
     return (
         <View style={styles.container}>
-            {/* Speed Gauge */}
-            <View style={styles.gaugeContainer}>
-                <Text style={styles.value}>{Math.round(telemetry.speed)}</Text>
-                <Text style={styles.unit}>km/h</Text>
+            {/* Speed — hero */}
+            <View style={styles.speedRow}>
+                <Text style={styles.speed}>{Math.round(t.speed)}</Text>
+                <Text style={styles.speedUnit}>km/h</Text>
             </View>
 
-            {/* Battery Gauge */}
-            <View style={styles.gaugeContainer}>
-                <Text style={[styles.value, { color: getBatteryColor(telemetry.batteryPercent) }]}>
-                    {Math.round(telemetry.batteryPercent)}%
-                </Text>
-                <Text style={styles.unit}>BATTERY</Text>
-            </View>
-
-            {/* Power Consumption */}
-            <View style={styles.statRow}>
-                <Text style={styles.statLabel}>POWER:</Text>
-                <Text style={styles.statValue}>{telemetry.consumption.toFixed(1)} kW</Text>
-            </View>
-
-            {/* Range (Est) */}
-            <View style={styles.statRow}>
-                <Text style={styles.statLabel}>RANGE:</Text>
-                <Text style={styles.statValue}>{Math.round(telemetry.range)} km</Text>
+            {/* Stats row */}
+            <View style={styles.statsRow}>
+                <View style={styles.stat}>
+                    <Text style={[styles.statVal, { color: getBatteryColor(t.batteryPercent) }]}>
+                        {Math.round(t.batteryPercent)}%
+                    </Text>
+                    <Text style={styles.statLbl}>BAT</Text>
+                </View>
+                <View style={styles.divider} />
+                <View style={styles.stat}>
+                    <Text style={styles.statVal}>{t.consumption.toFixed(1)}</Text>
+                    <Text style={styles.statLbl}>kW</Text>
+                </View>
+                <View style={styles.divider} />
+                <View style={styles.stat}>
+                    <Text style={styles.statVal}>{Math.round(t.range)}</Text>
+                    <Text style={styles.statLbl}>km</Text>
+                </View>
             </View>
         </View>
     );
 };
 
-const getBatteryColor = (percent: number) => {
-    if (percent > 50) return '#00FF00'; // Green
-    if (percent > 20) return '#FFA500'; // Orange
-    return '#FF0000'; // Red
-};
-
 const styles = StyleSheet.create({
     container: {
-        padding: 10,
-        backgroundColor: 'rgba(0,0,0,0.6)',
+        backgroundColor: 'rgba(0,0,0,0.55)',
         borderRadius: 10,
-        width: 150,
+        padding: 10,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.08)',
     },
-    gaugeContainer: {
-        alignItems: 'center',
-        marginBottom: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: '#555',
-        paddingBottom: 10,
+    speedRow: {
+        flexDirection: 'row',
+        alignItems: 'baseline',
+        marginBottom: 6,
     },
-    value: {
+    speed: {
         fontSize: 48,
         fontWeight: 'bold',
         color: 'white',
+        lineHeight: 50,
+        textShadowColor: 'rgba(0,0,0,0.9)',
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 6,
     },
-    unit: {
-        fontSize: 14,
-        color: '#CCC',
-        marginTop: -5,
+    speedUnit: {
+        fontSize: 13,
+        fontWeight: '700',
+        color: 'rgba(255,255,255,0.5)',
+        marginLeft: 4,
+        letterSpacing: 1,
     },
-    statRow: {
+    statsRow: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 5,
+        alignItems: 'center',
+        borderTopWidth: 1,
+        borderTopColor: 'rgba(255,255,255,0.1)',
+        paddingTop: 6,
     },
-    statLabel: {
-        color: '#AAA',
-        fontSize: 12,
+    stat: {
+        alignItems: 'center',
+        flex: 1,
     },
-    statValue: {
+    statVal: {
         color: 'white',
-        fontSize: 12,
+        fontSize: 14,
         fontWeight: 'bold',
+    },
+    statLbl: {
+        color: '#666',
+        fontSize: 9,
+        fontWeight: '600',
+        letterSpacing: 0.5,
+        marginTop: 1,
+    },
+    divider: {
+        width: 1,
+        height: 22,
+        backgroundColor: 'rgba(255,255,255,0.1)',
     },
 });
 

@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { StyleSheet, View, Text, StatusBar, SafeAreaView } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { StyleSheet, View, Text, StatusBar, SafeAreaView, TouchableOpacity } from 'react-native';
 import { useKeepAwake } from 'expo-keep-awake';
 import * as Location from 'expo-location';
 import { MjpegView } from './components/MjpegView';
@@ -18,6 +18,7 @@ export default function App() {
     const inferenceEnabled = useAppStore(state => state.inferenceEnabled);
     const activeModel = useAppStore(state => state.activeModel);
     const locationSub = useRef<Location.LocationSubscription | null>(null);
+    const [hudVisible, setHudVisible] = useState(true);
 
     // Start/stop detection polling
     useEffect(() => {
@@ -67,44 +68,57 @@ export default function App() {
             locationSub.current?.remove();
         };
     }, []);
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar hidden />
 
-            {/* 1. Video Layer — MJPEG Stream */}
+            {/* 1. Video — full screen, always visible */}
             <View style={styles.videoLayer}>
                 <MjpegView url={PI_URL} />
             </View>
 
-            {/* 2. Detection Layer (Over Video) */}
+            {/* 2. Detection overlay — always visible */}
             <View style={styles.overlayLayer}>
                 <DetectionOverlay />
             </View>
 
-            {/* 3. UI Dashboard Layer (Top) */}
-            <View style={styles.uiLayer}>
+            {/* 3. HUD Layer — togglable */}
+            <View style={styles.hudLayer}>
 
-                {/* Top Bar: Connection Status */}
-                <View style={styles.topBar}>
-                    <View style={[styles.statusDot, { backgroundColor: '#0F0' }]} />
-                    <Text style={styles.statusText}>MJPEG LIVE</Text>
-                </View>
+                {/* HUD toggle — always visible, top-right */}
+                <TouchableOpacity
+                    style={styles.hudToggle}
+                    onPress={() => setHudVisible(v => !v)}
+                    activeOpacity={0.7}
+                >
+                    <Text style={styles.hudToggleText}>
+                        {hudVisible ? '✕' : '☰'}
+                    </Text>
+                </TouchableOpacity>
 
-                {/* Left Panel: Telemetry */}
-                <View style={styles.leftPanel}>
-                    <TelemetryDashboard />
-                </View>
+                {hudVisible && (
+                    <>
+                        {/* Top-left: status badge */}
+                        <View style={styles.statusBadge}>
+                            <View style={styles.statusDot} />
+                            <Text style={styles.statusText}>LIVE</Text>
+                        </View>
 
-                {/* Right Panel: Controls + Map */}
-                <View style={styles.rightPanel}>
-                    <View style={styles.mapContainer}>
-                        <MapDashboard />
-                    </View>
-                    <View style={styles.controlsContainer}>
-                        <ControlPanel />
-                    </View>
-                </View>
+                        {/* Bottom-left: telemetry */}
+                        <View style={styles.bottomLeft}>
+                            <TelemetryDashboard />
+                        </View>
 
+                        {/* Bottom-right: mini map + controls */}
+                        <View style={styles.bottomRight}>
+                            <View style={styles.miniMap}>
+                                <MapDashboard />
+                            </View>
+                            <ControlPanel />
+                        </View>
+                    </>
+                )}
             </View>
         </SafeAreaView>
     );
@@ -123,54 +137,79 @@ const styles = StyleSheet.create({
         ...StyleSheet.absoluteFillObject,
         zIndex: 2,
     },
-    uiLayer: {
+    hudLayer: {
         ...StyleSheet.absoluteFillObject,
         zIndex: 3,
-        padding: 20,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
     },
-    topBar: {
+
+    /* HUD toggle button — always visible */
+    hudToggle: {
         position: 'absolute',
-        top: 20,
-        left: 0,
-        right: 0,
+        top: 10,
+        right: 12,
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: 'rgba(0,0,0,0.55)',
         alignItems: 'center',
-        flexDirection: 'row',
         justifyContent: 'center',
+        zIndex: 10,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.15)',
+    },
+    hudToggleText: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+
+    /* Status badge — top-left */
+    statusBadge: {
+        position: 'absolute',
+        top: 10,
+        left: 12,
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        borderRadius: 12,
+        paddingHorizontal: 10,
+        paddingVertical: 5,
     },
     statusDot: {
-        width: 10,
-        height: 10,
-        borderRadius: 5,
-        marginRight: 8,
+        width: 7,
+        height: 7,
+        borderRadius: 4,
+        backgroundColor: '#30D158',
+        marginRight: 6,
     },
     statusText: {
-        color: 'white',
+        color: 'rgba(255,255,255,0.8)',
         fontWeight: 'bold',
-        fontSize: 16,
-        textShadowColor: 'black',
-        textShadowRadius: 3,
+        fontSize: 11,
+        letterSpacing: 1,
     },
-    leftPanel: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'flex-start',
+
+    /* Bottom-left: telemetry */
+    bottomLeft: {
+        position: 'absolute',
+        bottom: 14,
+        left: 12,
     },
-    rightPanel: {
-        flex: 1,
-        justifyContent: 'space-between',
+
+    /* Bottom-right: map + controls */
+    bottomRight: {
+        position: 'absolute',
+        bottom: 14,
+        right: 12,
         alignItems: 'flex-end',
     },
-    mapContainer: {
-        width: 200,
-        height: 150,
-        marginBottom: 20,
-        borderRadius: 10,
+    miniMap: {
+        width: 140,
+        height: 100,
+        borderRadius: 8,
+        overflow: 'hidden',
         borderWidth: 1,
-        borderColor: 'white',
+        borderColor: 'rgba(255,255,255,0.15)',
+        marginBottom: 8,
     },
-    controlsContainer: {
-        //
-    }
 });
