@@ -18,6 +18,7 @@
             "supportsTablet": true
         },
         "android": {
+            "usesCleartextTraffic": true,
             "package": "com.solarracing.driverassist",
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",

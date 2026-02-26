@@ -26,6 +26,18 @@ export interface MapState {
     pathHistory: Array<{ latitude: number; longitude: number }>; // For polyline
 }
 
+export interface SolarIrradiance {
+    ghi: number;          // W/m² – Global Horizontal Irradiance
+    dni: number;          // W/m² – Direct Normal Irradiance
+    dhi: number;          // W/m² – Diffuse Horizontal Irradiance
+    lastUpdated: number;  // timestamp ms
+}
+
+export interface SolarHistoryEntry {
+    ghi: number;
+    timestamp: number;
+}
+
 export interface AppState {
     // Connection
     connectionStatus: ConnectionStatus;
@@ -49,6 +61,16 @@ export interface AppState {
     // Map
     mapState: MapState;
     updateMapState: (data: Partial<MapState>) => void;
+
+    // Solar
+    solarIrradiance: SolarIrradiance;
+    solarHistory: SolarHistoryEntry[];
+    solarInstability: number;           // 0–1 (0 = perfectly stable)
+    updateSolarIrradiance: (data: Partial<SolarIrradiance>) => void;
+
+    // Solar overlay
+    solarOverlayVisible: boolean;
+    setSolarOverlayVisible: (v: boolean) => void;
 }
 
 // Helper for collision risk
@@ -84,6 +106,11 @@ export const useAppStore = create<AppState>((set) => ({
         heading: 0,
         pathHistory: [],
     },
+
+    solarIrradiance: { ghi: 0, dni: 0, dhi: 0, lastUpdated: 0 },
+    solarHistory: [],
+    solarInstability: 0,
+    solarOverlayVisible: false,
 
     // Actions
     setConnectionStatus: (status) => set({ connectionStatus: status }),
@@ -129,6 +156,33 @@ export const useAppStore = create<AppState>((set) => ({
             isConeCollisionRisk: riskDetected
         };
     }),
+
+    updateSolarIrradiance: (data) => set((state) => {
+        const updated: SolarIrradiance = { ...state.solarIrradiance, ...data };
+        // Append to history (cap at 60 entries ≈ 60 min at 1/min polling)
+        const newHistory = [...state.solarHistory, { ghi: updated.ghi, timestamp: updated.lastUpdated }];
+        if (newHistory.length > 60) newHistory.splice(0, newHistory.length - 60);
+
+        // Compute instability as coefficient of variation of last 10 GHI values
+        let instability = 0;
+        const window = newHistory.slice(-10).map(e => e.ghi);
+        if (window.length >= 2) {
+            const mean = window.reduce((a, b) => a + b, 0) / window.length;
+            if (mean > 0) {
+                const variance = window.reduce((sum, v) => sum + (v - mean) ** 2, 0) / window.length;
+                const cv = Math.sqrt(variance) / mean;
+                instability = Math.min(cv, 1); // clamp to 0–1
+            }
+        }
+
+        return {
+            solarIrradiance: updated,
+            solarHistory: newHistory,
+            solarInstability: instability,
+        };
+    }),
+
+    setSolarOverlayVisible: (v) => set({ solarOverlayVisible: v }),
 
     updateMapState: (data) => set((state) => {
         // Append to path history if position changed significantly (optional optimization)

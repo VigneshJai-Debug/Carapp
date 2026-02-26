@@ -7,8 +7,11 @@ import { DetectionOverlay } from './components/DetectionOverlay';
 import TelemetryDashboard from './components/TelemetryDashboard';
 import ControlPanel from './components/ControlPanel';
 import MapDashboard from './components/MapDashboard';
+import SolarInstabilityBar from './components/SolarInstabilityBar';
+import SolarOverlay from './components/SolarOverlay';
 import { useAppStore } from './store/useAppStore';
 import { startDetectionPolling, stopDetectionPolling, setRemoteModel } from './services/InferenceClient';
+import { startSolarPolling, stopSolarPolling } from './services/SolarService';
 
 // Pi MJPEG servers
 const PI_FRONT_URL = "http://192.168.92.121:8080";
@@ -45,7 +48,7 @@ export default function App() {
         }
     }, [activeModel]);
 
-    // GPS Location Watcher
+    // GPS Location Watcher + Solar Polling
     useEffect(() => {
         (async () => {
             const { status } = await Location.requestForegroundPermissionsAsync();
@@ -68,10 +71,14 @@ export default function App() {
                     });
                 }
             );
+
+            // Start solar data polling once we have location
+            startSolarPolling();
         })();
 
         return () => {
             locationSub.current?.remove();
+            stopSolarPolling();
         };
     }, []);
 
@@ -135,9 +142,10 @@ export default function App() {
                             </TouchableOpacity>
                         </View>
 
-                        {/* Bottom-left: telemetry */}
+                        {/* Bottom-left: telemetry + solar bar */}
                         <View style={styles.bottomLeft}>
                             <TelemetryDashboard />
+                            <SolarInstabilityBar />
                         </View>
 
                         {/* Bottom-right: mini map + controls */}
@@ -150,6 +158,9 @@ export default function App() {
                     </>
                 )}
             </View>
+
+            {/* 4. Solar overlay — renders above everything */}
+            <SolarOverlay />
         </SafeAreaView>
     );
 }
