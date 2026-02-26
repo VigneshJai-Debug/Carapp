@@ -5,24 +5,21 @@ Real-time driver assistance system for a solar racing car. Streams video from a 
 ## Architecture
 
 ```mermaid
-graph LR
-    subgraph Pi ["Raspberry Pi"]
-        CAM["Camera"] --> OCV["OpenCV"]
-        OCV --> TFL["TFLite Inference"]
-        SRV["aiohttp server"]
+flowchart TB
+    subgraph PI["🟢 Raspberry Pi"]
+        direction LR
+        CAM["📷 Camera"] --> OCV["OpenCV"] --> TFL["TFLite\nInference"] --> SRV["aiohttp\nServer"]
     end
 
-    subgraph App ["Android App (React Native / Expo)"]
-        WV["MjpegView (video)"]
-        DO["DetectionOverlay (SVG)"]
-        TD["TelemetryDashboard"]
-        CP["ControlPanel"]
-        MD["MapDashboard"]
-    end
+    SRV -- "/stream · MJPEG" --> APP
+    SRV -- "/detections · JSON" --> APP
+    APP -- "/set_model" --> SRV
 
-    App -- "GET /stream (MJPEG)" --> SRV
-    App -- "GET /detections" --> SRV
-    App -- "POST /set_model" --> SRV
+    subgraph APP["📱 Android App · React Native"]
+        direction LR
+        VID["MjpegView"] ~~~ DET["DetectionOverlay"] ~~~ MAP["MapDashboard"]
+        CTL["ControlPanel"] ~~~ TEL["TelemetryDashboard"] ~~~ SOL["SolarOverlay"]
+    end
 ```
 
 ## Quick Start
@@ -124,7 +121,8 @@ npm test
 The Pi connects to the Android phone's Wi-Fi hotspot via Ethernet. The phone runs the app and communicates with the Pi over standard HTTP.
 
 ```mermaid
-graph TD
-    HOTSPOT["Phone Hotspot (10.165.71.x)"] --> PI["Pi (10.165.71.121) — Camera + Inference"]
-    HOTSPOT --> APP["Phone App — Display + Controls"]
+flowchart TD
+    HOTSPOT["📶 Phone Wi-Fi Hotspot\n10.165.71.x"] -->|Ethernet| PI["🟢 Raspberry Pi\n10.165.71.121"]
+    HOTSPOT -->|Localhost| APP["📱 Phone App\nDisplay + Controls"]
+    PI <-->|HTTP| APP
 ```
