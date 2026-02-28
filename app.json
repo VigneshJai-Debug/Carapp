@@ -18,8 +18,6 @@
     },
     "android": {
       "package": "com.solarracing.driverassist",
-      "minSdkVersion": 24,
-      "kotlinVersion": "1.9.25",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png"
       },
@@ -40,7 +38,7 @@
           "apiKey": "AIzaSyDUMMY_API_KEY_FOR_OSM_TILES_ONLY"
         }
       }
-    },
+    }
     "plugins": [
       [
         "expo-location",
@@ -55,7 +53,15 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
         }
       ],
-      "expo-asset"
+      "expo-asset",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "1.9.25"
+          }
+        }
+      ]
     ],
     "extra": {
       "eas": {
