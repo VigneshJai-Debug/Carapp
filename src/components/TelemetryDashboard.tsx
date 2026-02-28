@@ -12,21 +12,8 @@ const TelemetryDashboard: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            {/* Speed Section */}
-            <View style={styles.speedBox}>
-                <Text style={styles.speedValue}>{Math.round(telemetry.speed)}</Text>
-                <Text style={styles.speedUnit}>KM/H</Text>
-            </View>
-
             {/* Stats Section */}
             <View style={styles.statsBox}>
-                <View style={styles.statLine}>
-                    <Text style={styles.statLabel}>BATT</Text>
-                    <Text style={[styles.statValue, { color: telemetry.batteryPercent < 20 ? '#FF453A' : '#30D158' }]}>
-                        {Math.round(telemetry.batteryPercent)}%
-                    </Text>
-                </View>
-
                 <View style={styles.statLine}>
                     <Text style={styles.statLabel}>B1</Text>
                     <Text style={styles.statValue}>{telemetry.battery1Temp}°C</Text>
@@ -48,26 +35,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderWidth: 1,
         borderColor: 'rgba(255, 255, 255, 0.1)',
-        minWidth: 160,
-    },
-    speedBox: {
-        alignItems: 'center',
-        marginRight: 12,
-        borderRightWidth: 1,
-        borderRightColor: 'rgba(255, 255, 255, 0.1)',
-        paddingRight: 10,
-    },
-    speedValue: {
-        color: '#FFFFFF',
-        fontSize: 32,
-        fontWeight: '900',
-        fontFamily: 'System', // Bold racing font
-    },
-    speedUnit: {
-        color: 'rgba(255, 255, 255, 0.5)',
-        fontSize: 10,
-        fontWeight: '700',
-        marginTop: -4,
+        minWidth: 120,
     },
     statsBox: {
         flex: 1,
