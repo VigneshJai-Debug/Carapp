@@ -6,7 +6,7 @@ This project consists of two parts: the **Mobile Dashboard (Frontend)** and the 
 The frontend is built with React Native and Expo.
 
 ### Prerequisites
-- Node.js installed on your computer.
+- Node.js **20.11.1+** installed on your computer (required for SDK 52 compatibility).
 
 ### Installation Command
 Run the following command in the root `Carapp` directory:

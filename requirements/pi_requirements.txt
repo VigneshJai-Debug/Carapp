@@ -2,3 +2,4 @@ numpy
 opencv-python
 aiohttp
 ai-edge-litert
+Pillow
