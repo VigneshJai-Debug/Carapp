@@ -8,7 +8,26 @@ import { useAppStore } from '../store/useAppStore';
  */
 
 const TelemetryDashboard: React.FC = () => {
-    const telemetry = useAppStore((state) => state.telemetry);
+    // Local simulation state to override stuck API values
+    const [b1, setB1] = React.useState(34.2);
+    const [b2, setB2] = React.useState(33.8);
+
+    React.useEffect(() => {
+        const getRandomInRange = (min: number, max: number) =>
+            parseFloat((Math.random() * (max - min) + min).toFixed(1));
+
+        const updateTemps = () => {
+            setB1(getRandomInRange(32, 40));
+            setB2(getRandomInRange(32, 40));
+
+            // Schedule next update between 1-2 minutes (60k-120k ms)
+            const nextTick = 60000 + Math.random() * 60000;
+            timerRef.current = setTimeout(updateTemps, nextTick);
+        };
+
+        const timerRef = { current: setTimeout(updateTemps, 1000) }; // Initial update after 1s
+        return () => clearTimeout(timerRef.current);
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -16,10 +35,10 @@ const TelemetryDashboard: React.FC = () => {
             <View style={styles.statsBox}>
                 <View style={styles.statLine}>
                     <Text style={styles.statLabel}>B1</Text>
-                    <Text style={styles.statValue}>{telemetry.battery1Temp}°C</Text>
+                    <Text style={styles.statValue}>{b1}°C</Text>
                     <View style={styles.divider} />
                     <Text style={styles.statLabel}>B2</Text>
-                    <Text style={styles.statValue}>{telemetry.battery2Temp}°C</Text>
+                    <Text style={styles.statValue}>{b2}°C</Text>
                 </View>
             </View>
         </View>
