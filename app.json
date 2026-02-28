@@ -38,7 +38,7 @@
           "apiKey": "AIzaSyDUMMY_API_KEY_FOR_OSM_TILES_ONLY"
         }
       }
-    }
+    },
     "plugins": [
       [
         "expo-location",
@@ -53,7 +53,6 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
         }
       ],
-      "expo-asset",
       [
         "expo-build-properties",
         {
