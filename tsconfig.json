@@ -1,30 +1,31 @@
 {
-    "compilerOptions": {
-        "allowJs": true,
-        "esModuleInterop": true,
-        "jsx": "react-native",
-        "lib": [
-            "DOM",
-            "ESNext"
-        ],
-        "noEmit": true,
-        "resolveJsonModule": true,
-        "skipLibCheck": true,
-        "target": "ESNext",
-        "strict": false,
-        "noImplicitAny": false,
-        "moduleResolution": "node",
-        "allowSyntheticDefaultImports": true,
-        "baseUrl": ".",
-        "paths": {
-            "*": [
-                "node_modules/*"
-            ]
-        }
-    },
-    "include": [
-        "src/**/*.ts",
-        "src/**/*.tsx",
-        "App.tsx"
-    ]
+  "compilerOptions": {
+    "allowJs": true,
+    "esModuleInterop": true,
+    "jsx": "react-native",
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "target": "ESNext",
+    "strict": false,
+    "noImplicitAny": false,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "node_modules/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "App.tsx"
+  ],
+  "extends": "expo/tsconfig.base"
 }
