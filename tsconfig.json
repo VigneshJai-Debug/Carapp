@@ -1,11 +1,30 @@
 {
-    "extends": "expo/tsconfig.base",
     "compilerOptions": {
-        "strict": true
+        "allowJs": true,
+        "esModuleInterop": true,
+        "jsx": "react-native",
+        "lib": [
+            "DOM",
+            "ESNext"
+        ],
+        "noEmit": true,
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "target": "ESNext",
+        "strict": false,
+        "noImplicitAny": false,
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "node_modules/*"
+            ]
+        }
     },
     "include": [
-        "**/*.ts",
-        "**/*.tsx",
-        ".eslintrc.js"
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "App.tsx"
     ]
 }

@@ -93,7 +93,6 @@ const styles = StyleSheet.create({
         width: 1,
         height: 10,
         backgroundColor: 'rgba(255, 255, 255, 0.2)',
-        mx: 6,
         marginHorizontal: 8,
     },
 });
