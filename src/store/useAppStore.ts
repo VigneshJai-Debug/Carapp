@@ -8,6 +8,8 @@ export interface Telemetry {
     batteryPercent: number; // 0-100
     consumption: number;  // kW
     range: number;        // km (derived or received)
+    battery1Temp: number; // °C
+    battery2Temp: number; // °C
 }
 
 export interface Detection {
@@ -95,6 +97,8 @@ export const useAppStore = create<AppState>((set) => ({
         batteryPercent: 100,
         consumption: 0,
         range: 0,
+        battery1Temp: 35,
+        battery2Temp: 35,
     },
 
     detections: [],

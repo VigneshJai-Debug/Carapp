@@ -1,58 +1,74 @@
 {
-    "expo": {
-        "name": "ASSVA",
-        "slug": "assva",
-        "version": "1.0.0",
-        "orientation": "landscape",
-        "icon": "./assets/icon.png",
-        "userInterfaceStyle": "dark",
-        "splash": {
-            "image": "./assets/splash.png",
-            "resizeMode": "contain",
-            "backgroundColor": "#000000"
-        },
-        "assetBundlePatterns": [
-            "**/*"
-        ],
-        "ios": {
-            "supportsTablet": true
-        },
-        "android": {
-            "usesCleartextTraffic": true,
-            "package": "com.solarracing.driverassist",
-            "adaptiveIcon": {
-                "foregroundImage": "./assets/adaptive-icon.png",
-                "backgroundColor": "#000000"
-            },
-            "permissions": [
-                "CAMERA",
-                "RECORD_AUDIO",
-                "ACCESS_FINE_LOCATION",
-                "ACCESS_COARSE_LOCATION",
-                "ACCESS_NETWORK_STATE",
-                "INTERNET",
-                "WAKE_LOCK"
-            ],
-            "config": {
-                "googleMaps": {
-                    "apiKey": "AIzaSyDUMMY_API_KEY_FOR_OSM_TILES_ONLY"
-                }
-            }
-        },
-        "plugins": [
-            [
-                "expo-location",
-                {
-                    "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
-                }
-            ],
-            [
-                "@config-plugins/react-native-webrtc",
-                {
-                    "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera.",
-                    "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
-                }
-            ]
-        ]
+  "expo": {
+    "name": "ASSVA",
+    "slug": "assva",
+    "version": "1.0.0",
+    "orientation": "landscape",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bitcode": false
+    },
+    "android": {
+      "usesCleartextTraffic": true,
+      "package": "com.solarracing.driverassist",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#000000"
+      },
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_NETWORK_STATE",
+        "INTERNET",
+        "WAKE_LOCK",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.CAMERA",
+        "android.permission.INTERNET",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.WAKE_LOCK",
+        "android.permission.BLUETOOTH"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDUMMY_API_KEY_FOR_OSM_TILES_ONLY"
+        }
+      }
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ],
+      [
+        "@config-plugins/react-native-webrtc",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera.",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "75bf4fda-6281-4efe-abdb-55b17d81e915"
+      }
     }
+  }
 }

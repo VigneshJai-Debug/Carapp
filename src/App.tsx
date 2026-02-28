@@ -12,15 +12,16 @@ import SolarOverlay from './components/SolarOverlay';
 import { useAppStore } from './store/useAppStore';
 import { startDetectionPolling, stopDetectionPolling, setRemoteModel } from './services/InferenceClient';
 import { startSolarPolling, stopSolarPolling } from './services/SolarService';
+import { startTelemetryPolling, stopTelemetryPolling } from './services/TelemetryService';
 
 // Pi MJPEG servers
-const PI_FRONT_URL = "http://192.168.92.121:8080";
-const PI_REAR_URL = "http://192.168.92.121:8081";
+const PI_FRONT_URL = "http://10.171.18.200:8080";
+const PI_REAR_URL = "http://10.171.18.200:8081";
 
 export default function App() {
     useKeepAwake();
-    const inferenceEnabled = useAppStore(state => state.inferenceEnabled);
-    const activeModel = useAppStore(state => state.activeModel);
+    const inferenceEnabled = useAppStore((state) => state.inferenceEnabled);
+    const activeModel = useAppStore((state) => state.activeModel);
     const locationSub = useRef<Location.LocationSubscription | null>(null);
     const [hudVisible, setHudVisible] = useState(true);
     const [activeCamera, setActiveCamera] = useState<'front' | 'rear' | 'frontRaw'>('front');
@@ -76,9 +77,13 @@ export default function App() {
             startSolarPolling();
         })();
 
+        // Start telemetry polling
+        startTelemetryPolling();
+
         return () => {
             locationSub.current?.remove();
             stopSolarPolling();
+            stopTelemetryPolling();
         };
     }, []);
 

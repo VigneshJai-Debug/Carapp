@@ -13,6 +13,7 @@ import json
 import os
 import numpy as np
 import cv2
+import random
 
 from aiohttp import web
 from aiohttp.web import middleware
@@ -433,6 +434,29 @@ async def handle_status(request):
     })
 
 
+async def handle_telemetry(request):
+    """
+    Returns 'justified random' telemetry data.
+    Coimbatore ambient ~32°C. Airy structure keeps batteries 35-45°C.
+    """
+    # Simulate realistic fluctuations
+    b1_temp = round(random.uniform(36.2, 38.5), 1)
+    b2_temp = round(random.uniform(35.8, 37.9), 1)
+    
+    # Speed simulation (0-40 km/h)
+    speed = round(random.uniform(15.0, 25.0), 1)
+    batt_pct = 85 # Dummy battery percentage
+    
+    return web.json_response({
+        "speed": speed,
+        "batteryPercent": batt_pct,
+        "battery1Temp": b1_temp,
+        "battery2Temp": b2_temp,
+        "consumption": round(random.uniform(0.5, 2.5), 2),
+        "range": 42
+    })
+
+
 async def handle_debug(request):
     """Run one inference and dump raw output for debugging."""
     global active_model
@@ -520,6 +544,7 @@ if __name__ == "__main__":
     app.router.add_get("/detections", handle_detections)
     app.router.add_post("/set_model", handle_set_model)
     app.router.add_get("/status", handle_status)
+    app.router.add_get("/telemetry", handle_telemetry)
     app.router.add_get("/debug", handle_debug)
 
     logger.info("Server on http://0.0.0.0:8080")
